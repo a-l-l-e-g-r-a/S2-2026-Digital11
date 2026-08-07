@@ -120,34 +120,55 @@ function drawTempWidget(x, y, tempVal) {
     noStroke();
     rect(x, y, 200, 150, 10);
     fill(25, 113, 194);
-    fill(255);
     textSize(20);
     text("Water Temp", x + 15, y + 15);
+    fill(255);
     textSize(36);
     text(tempVal + "°C", x + 15, y + 50);
   }
 }
 // pH individual widget
 function drawPHWidget(x, y, label, val, minVal, maxVal) {
-  if (val >= 8) {
+  if (val > 8.2) {
     fill(255, 0, 0);
     noStroke();
     rect(x, y, 200, 150, 10);
     fill(255);
     textSize(20);
-    text(label, x + 15, y + 15);
-    fill(255);
+    text("pH Level", x + 15, y + 15);
     text("WARNING: HIGH \npH DETECTED", x + 15, y + 45);
     textSize(36);
     text(val + " pH", x + 15, y + 95);
   } 
+  else if (val < 6.5) {
+    fill(255, 0, 0);
+    noStroke();
+    rect(x, y, 200, 150, 10);
+    fill(255);
+    textSize(20);
+    text("pH Level", x + 15, y + 15);
+    text("WARNING: LOW \npH DETECTED", x + 15, y + 45);
+    textSize(36);
+    text(val + " pH", x + 15, y + 95);
+  }
+  else if (val >= 6.5 && val < 6.8 || val > 7.8 && val <= 8.2) {
+    fill(255, 255, 0);
+    noStroke();
+    rect(x, y, 200, 150, 10);
+    fill(0);
+    textSize(20);
+    text("pH Level", x + 15, y + 15);
+    text("OUTSIDE TARGET \nRANGE", x + 15, y + 45);
+    textSize(36);
+    text(val + " pH", x + 15, y + 95);
+  }
   else {
     fill(165, 216, 255);
     noStroke();
     rect(x, y, 200, 150, 10);
     fill(25, 113, 194);
     textSize(20);
-    text(label, x + 15, y + 15);
+    text("pH Level", x + 15, y + 15);
     fill(255);
     textSize(36);
     text(val + " pH", x + 15, y + 50);
