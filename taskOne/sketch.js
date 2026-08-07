@@ -54,7 +54,7 @@ function draw() {
 
   // 2. Render Dashboard Graphics
   if (aquariumData) { // data from API listed here:
-    let temp = aquariumData[0].exps.temperature.curr; //if this value is > 23, warning is displayed
+    let temp = aquariumData[0].exps.temperature.curr; //ranges work, may want to change colours later on
     let ph = aquariumData[0].exps.ph.curr; //if this value is > 8, warning is displayed
     let nh3 = aquariumData[0].exps.nh3.curr;
     let nh4 = aquariumData[0].exps.nh4.curr;
@@ -63,13 +63,13 @@ function draw() {
     let historyData = aquariumData[0].exps.HistoryData;
 
     // Call your custom graphic widgets
-    drawTempWidget(50, 120, temp);
-    drawPHWidget(300, 120, "pH Level", ph, 6.0, 8.5);
+    drawTempWidget(30, 110, temp);
+    drawPHWidget(30, 280, "pH Level", ph, 6.0, 8.5);
     drawGaugeWidget(550, 120, "Ammonia (NH3)", nh3, 0.0, 0.05);
     drawGaugeWidget(550, 280, "Nitrate (NH4)", nh4, 0.0, 1.0);
     drawGaugeWidget(300, 280, "Oxygen (O2)", o2, 0.0, 10.0);
-    drawGaugeWidget(50, 280, "Lux", lux, 0, 10000);
-    drawTempHistoryWidget(50, 420, aquariumData[0].exps.HistoryData);
+    drawGaugeWidget(300, 280, "Lux", lux, 0, 10000);
+    drawTempHistoryWidget(400, 420, aquariumData[0].exps.HistoryData);
 
   } else {
     // Loading State
@@ -82,39 +82,49 @@ function draw() {
 // TEMPERATURE CARD
 function drawTempWidget(x, y, tempVal) {
   // Background
-  if (tempVal > 26) {
+  if (tempVal > 28) {
     fill(255, 0, 0); // Red for wrong temp 
     noStroke();
     rect(x, y, 200, 150, 10);
     fill(255);
     textSize(20);
     text("Water Temp", x + 15, y + 15);
-    fill(255);
-    text("WARNING: HIGH TEMP \nDETECTED", x + 15, y + 40);
+    text("WARNING: HIGH \nTEMP DETECTED", x + 15, y + 40);
     textSize(36);
-    text(tempVal + "°C", x + 15, y + 80);
+    text(tempVal + "°C", x + 15, y + 95);
   }
-  else if (tempVal < 22) {
+  else if (tempVal < 20) {
     fill(255, 0, 0); // Red for wrong temp
     noStroke();
     rect(x, y, 200, 150, 10);
     fill(255);
     textSize(20);
     text("Water Temp", x + 15, y + 15);
-    fill(255);
-    text("WARNING: LOW TEMP \nDETECTED", x + 15, y + 40);
+    text("WARNING: LOW \nTEMP DETECTED", x + 15, y + 40);
     textSize(36);
-    text(tempVal + "°C", x + 15, y + 80);
+    text(tempVal + "°C", x + 15, y + 95);
+  }
+  else if (tempVal >= 20 && tempVal < 22 || tempVal > 26 && tempVal <= 28) {
+    fill(255, 255, 0); // Yellow for outside target range 
+    noStroke();
+    rect(x, y, 200, 150, 10);
+    fill(0);
+    textSize(20);
+    text("Water Temp", x + 15, y + 15);
+    text("OUTSIDE TARGET \nRANGE", x + 15, y + 40);
+    textSize(36);
+    text(tempVal + "°C", x + 15, y + 95);
   }
   else {
     fill(165, 216, 255);
+    noStroke();
+    rect(x, y, 200, 150, 10);
+    fill(25, 113, 194);
     fill(255);
     textSize(20);
     text("Water Temp", x + 15, y + 15);
-    fill(255);
-    text("WARNING: LOW \nTEMP DETECTED", x + 15, y + 40);
     textSize(36);
-    text(tempVal + "°C", x + 15, y + 80);
+    text(tempVal + "°C", x + 15, y + 50);
   }
 }
 // pH individual widget
@@ -128,7 +138,6 @@ function drawPHWidget(x, y, label, val, minVal, maxVal) {
     text(label, x + 15, y + 15);
     fill(255);
     text("WARNING: HIGH \npH DETECTED", x + 15, y + 45);
-    fill(255);
     textSize(36);
     text(val + " pH", x + 15, y + 95);
   } 
