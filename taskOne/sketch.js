@@ -18,7 +18,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1000, 600);
+  createCanvas(1200, 700);
   
   // Refresh live data every 5 minutes (300,000 ms)
   if (!USE_OFFLINE_MOCK) {
@@ -39,17 +39,17 @@ function onError(err) {
 }
 
 function draw() {
-  background(159, 195, 233, 200);
+  background(231, 245, 255, 200);
 
   // 1. Draw Title Header
-  fill(0);
-  textSize(24);
+  fill(25, 113, 194);
+  textSize(30);
   textAlign(LEFT, TOP);
   text("AQUAPONICS DATA", 30, 30);
 
   // Display connection status
-  textSize(15);
-  fill(0);
+  textSize(18);
+  fill(25, 113, 194);
   text("Last updated: " + (lastUpdated || "Loading..."), 30, 65);
 
   // 2. Render Dashboard Graphics
@@ -82,46 +82,41 @@ function draw() {
 // TEMPERATURE CARD
 function drawTempWidget(x, y, tempVal) {
   // Background
-  if (tempVal >= 23 || tempVal <= 15) {
+  if (tempVal > 26) {
     fill(255, 0, 0); // Red for wrong temp 
-  }
-  else {
-    fill(0, 71, 100);
-  }
-  noStroke();
-  rect(x, y, 200, 150, 10);
-  // Label
-  noStroke();
-  if (tempVal >= 23) {
+    noStroke();
+    rect(x, y, 200, 150, 10);
     fill(255);
-    textSize(14);
+    textSize(20);
     text("Water Temp", x + 15, y + 15);
     fill(255);
     text("WARNING: HIGH TEMP \nDETECTED", x + 15, y + 40);
+    textSize(36);
+    text(tempVal + "°C", x + 15, y + 80);
   }
-  else if (tempVal <= 15) {
+  else if (tempVal < 22) {
+    fill(255, 0, 0); // Red for wrong temp
+    noStroke();
+    rect(x, y, 200, 150, 10);
     fill(255);
-    textSize(14);
+    textSize(20);
     text("Water Temp", x + 15, y + 15);
     fill(255);
     text("WARNING: LOW TEMP \nDETECTED", x + 15, y + 40);
-  }
-  else {
-    fill(180, 200, 220);
-    textSize(14);
-    text("Water Temp", x + 15, y + 15);
-  }
-  // Value
-  fill(255);
-  textSize(36);
-  if (tempVal >= 23 || tempVal <= 15) {
+    textSize(36);
     text(tempVal + "°C", x + 15, y + 80);
-  } 
+  }
   else {
-    text(tempVal + "°C", x + 15, y + 50);
+    fill(165, 216, 255);
+    fill(255);
+    textSize(20);
+    text("Water Temp", x + 15, y + 15);
+    fill(255);
+    text("WARNING: LOW \nTEMP DETECTED", x + 15, y + 40);
+    textSize(36);
+    text(tempVal + "°C", x + 15, y + 80);
   }
 }
-
 // pH individual widget
 function drawPHWidget(x, y, label, val, minVal, maxVal) {
   if (val >= 8) {
@@ -129,20 +124,20 @@ function drawPHWidget(x, y, label, val, minVal, maxVal) {
     noStroke();
     rect(x, y, 200, 150, 10);
     fill(255);
-    textSize(14);
+    textSize(20);
     text(label, x + 15, y + 15);
     fill(255);
-    text("WARNING: HIGH pH \nDETECTED", x + 15, y + 40);
+    text("WARNING: HIGH \npH DETECTED", x + 15, y + 45);
     fill(255);
     textSize(36);
-    text(val + " pH", x + 15, y + 80);
+    text(val + " pH", x + 15, y + 95);
   } 
   else {
-    fill(0, 71, 100);
+    fill(165, 216, 255);
     noStroke();
     rect(x, y, 200, 150, 10);
-    fill(180, 200, 220);
-    textSize(14);
+    fill(25, 113, 194);
+    textSize(20);
     text(label, x + 15, y + 15);
     fill(255);
     textSize(36);
@@ -152,13 +147,13 @@ function drawPHWidget(x, y, label, val, minVal, maxVal) {
 
 // Example Widget Function: Simple Bar Gauge
 function drawGaugeWidget(x, y, label, val, minVal, maxVal) {
-  fill(0, 71, 100);
-  stroke(60, 80, 110);
+  fill(165, 216, 255);
+  noStroke();
   rect(x, y, 200, 150, 10);
 
   noStroke();
-  fill(180, 200, 220);
-  textSize(14);
+  fill(25, 113, 194);
+  textSize(20);
   text(label, x + 15, y + 15);
 
   fill(255);
@@ -167,12 +162,12 @@ function drawGaugeWidget(x, y, label, val, minVal, maxVal) {
 }
 
 function drawTempHistoryWidget(x, y, historyData) {
-  fill(0, 71, 100);
-  stroke(60, 80, 110);
+  fill(165, 216, 255);
+  noStroke();
   rect(x, y, 700, 150, 10);
 
   noStroke();
-  fill(180, 200, 220);
-  textSize(14);
+  fill(25, 113, 194);
+  textSize(20);
   text("Temperature History", x + 15, y + 15);
 }
