@@ -18,7 +18,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(800, 500);
+  createCanvas(1000, 600);
   
   // Refresh live data every 5 minutes (300,000 ms)
   if (!USE_OFFLINE_MOCK) {
@@ -45,10 +45,10 @@ function draw() {
   fill(0);
   textSize(24);
   textAlign(LEFT, TOP);
-  text("Aquaponics Data", 30, 30);
+  text("AQUAPONICS DATA", 30, 30);
 
   // Display connection status
-  textSize(12);
+  textSize(15);
   fill(0);
   text("Last updated: " + (lastUpdated || "Loading..."), 30, 65);
 
@@ -175,4 +175,4 @@ function drawTempHistoryWidget(x, y, historyData) {
   fill(180, 200, 220);
   textSize(14);
   text("Temperature History", x + 15, y + 15);
-
+}
