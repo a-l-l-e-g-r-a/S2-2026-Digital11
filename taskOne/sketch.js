@@ -111,7 +111,7 @@ function drawTempWidget(x, y, tempVal) {
 }
 
 // pH individual widget -> Warning messages
-function drawPHWidget(x, y, label, val, minVal, maxVal) {
+function drawPHWidget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 210, 140, 10);
@@ -139,7 +139,7 @@ function drawPHWidget(x, y, label, val, minVal, maxVal) {
 }
 
 // nh3 individual widget -> warning messages for high ammonia levels
-function drawNH3Widget(x, y, label, val, minVal, maxVal) {
+function drawNH3Widget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 210, 140, 10);
@@ -162,7 +162,7 @@ function drawNH3Widget(x, y, label, val, minVal, maxVal) {
 }
 
 // nh4 individual widget -> ADD WARNING MESSAGES
-function drawNH4Widget(x, y, label, val, minVal, maxVal) {
+function drawNH4Widget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 210, 140, 10);
@@ -175,7 +175,7 @@ function drawNH4Widget(x, y, label, val, minVal, maxVal) {
 }
 
 // o2 individual widget -> ADD WARNING MESSAGES
-function drawOxyWidget(x, y, label, val, minVal, maxVal) {
+function drawOxyWidget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 200, 140, 10);
@@ -184,7 +184,7 @@ function drawOxyWidget(x, y, label, val, minVal, maxVal) {
   text("Oxygen (O2)", x + 15, y + 12);
   fill(25, 113, 194);
   textSize(36);
-  text(val + " AHHH WHAT UNIT IS THIS IN", x + 15, y + 42);
+  text(val + " mg/L", x + 15, y + 42);
 }
 
 // temp history widget -> need to actually add the history data
@@ -198,7 +198,7 @@ function drawTempHistoryWidget(x, y, historyData) {
 }
 
 // pH level further data widget :)
-function drawPHWidget2(x, y, label, val, minVal, maxVal) {
+function drawPHWidget2(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 355, 140, 10);
@@ -208,7 +208,7 @@ function drawPHWidget2(x, y, label, val, minVal, maxVal) {
 }
 
 // NH3 history widget
-function drawNH3HistoryWidget(x, y, label, val, minVal, maxVal) {
+function drawNH3HistoryWidget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 355, 140, 10);
@@ -218,7 +218,7 @@ function drawNH3HistoryWidget(x, y, label, val, minVal, maxVal) {
 }
 
 // NH4 history widget
-function drawNH4HistoryWidget(x, y, label, val, minVal, maxVal) {
+function drawNH4HistoryWidget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 355, 140, 10); 
@@ -228,7 +228,7 @@ function drawNH4HistoryWidget(x, y, label, val, minVal, maxVal) {
 }
 
 // Oxygen history widget
-function drawOxyHistoryWidget(x, y, label, val, minVal, maxVal) {
+function drawOxyHistoryWidget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 355, 140, 10);
