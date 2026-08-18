@@ -11,6 +11,9 @@ const USE_OFFLINE_MOCK = false;
 let aquariumData = null;
 let lastUpdated = "";
 
+const DASHBOARD_WIDTH = 1180;
+const DASHBOARD_HEIGHT = 770;
+
 function preload() {
   // Load initial data before setup() runs
   let endpoint = USE_OFFLINE_MOCK ? "sample-data.json" : PROXY_URL;
@@ -18,7 +21,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1200, 700);
+  createCanvas(windowWidth, windowHeight);
   
   // Refresh live data every 5 minutes (300,000 ms)
   if (!USE_OFFLINE_MOCK) {
@@ -26,6 +29,10 @@ function setup() {
       loadJSON(PROXY_URL, onDataLoaded, onError);
     }, 300000);
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function onDataLoaded(data) {
@@ -41,16 +48,21 @@ function onError(err) {
 function draw() {
   background(231, 245, 255, 200);
 
+  const scaleFactor = min(width / DASHBOARD_WIDTH, height / DASHBOARD_HEIGHT);
+  push();
+  translate((width - DASHBOARD_WIDTH * scaleFactor) / 2, (height - DASHBOARD_HEIGHT * scaleFactor) / 2);
+  scale(scaleFactor);
+
   // 1. Draw Title Header
   fill(25, 113, 194);
   textSize(30);
   textAlign(LEFT, TOP);
-  text("SILVERPERCH AQUAPONICS DATA", 20, 20);
+  text("SILVERPERCH AQUAPONICS DATA", 20, 30);
 
   // Display connection status
   textSize(18);
   fill(25, 113, 194);
-  text("Last updated: " + (lastUpdated || "Loading..."), 20, 55);
+  text("Last updated: " + (lastUpdated || "Loading..."), 20, 70);
 
   // 2. Render Dashboard Graphics
   if (aquariumData) { // data from API listed here:
@@ -61,16 +73,17 @@ function draw() {
     let o2 = aquariumData[0].exps.o2.curr;
 
     // Call your custom graphic widgets
-    drawTempWidget(20, 90, temp);
-    drawPHWidget(20, 240, "pH Level", ph, 6.0, 8.5);
-    drawNH3Widget(20, 390, "Ammonia (NH3)", nh3, 0.0, 0.05);
-    drawNH4Widget(20, 540, "Nitrate (NH4)", nh4, 0.0, 1.0);
-    drawOxyWidget(605, 90, "Oxygen (O2)", o2, 0.0, 10.0);
-    drawTempHistoryWidget(240, 90);
-    drawPHWidget2(240, 240);
-    drawNH3HistoryWidget(240, 390); 
-    drawNH4HistoryWidget(240, 540);
-    drawOxyHistoryWidget(815, 90);
+    drawTempWidget(20, 110, temp);
+    drawPHWidget(20, 280, "pH Level", ph, 6.0, 8.5);
+    drawNH3Widget(20, 450, "Ammonia (NH3)", nh3, 0.0, 0.05);
+    drawNH4Widget(20, 620, "Nitrate (NH4)", nh4, 0.0, 1.0);
+    drawOxyWidget(605, 110, "Oxygen (O2)", o2, 0.0, 10.0);
+    
+    drawTempHistoryWidget(240, 110);
+    drawPHWidget2(240, 280);
+    drawNH3HistoryWidget(240, 450); 
+    drawNH4HistoryWidget(240, 620);
+    drawOxyHistoryWidget(825, 110);
 
   } else {
     // Loading State
@@ -78,9 +91,11 @@ function draw() {
     textSize(18);
     text("Connecting to sensor stream...", 30, 120);
   }
+
+  pop();
 }
 
-// TEMPERATURE CARD -> Warning messages set to appear under value if outside target range
+// TEMPERATURE CARD -> Warning messages set to appear under value if outside target range -> prolly should change this to use the status
 function drawTempWidget(x, y, tempVal) {
   // Background
   fill(165, 216, 255);
@@ -178,7 +193,7 @@ function drawNH4Widget(x, y, label, val) {
 function drawOxyWidget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
-  rect(x, y, 200, 140, 10);
+  rect(x, y, 210, 140, 10);
   fill(25, 113, 194);
   textSize(20);
   text("Oxygen (O2)", x + 15, y + 12);
