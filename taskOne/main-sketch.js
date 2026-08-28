@@ -66,19 +66,29 @@ function draw() {
 
   // 2. Render Dashboard Graphics
   if (aquariumData) { // data from API listed here:
-    let temp = aquariumData[0].exps.temperature.curr; 
+    let temp = aquariumData[0].exps.temperature.curr; // Current data values
     let ph = aquariumData[0].exps.ph.curr; 
     let nh3 = aquariumData[0].exps.nh3.curr;
     let nh4 = aquariumData[0].exps.nh4.curr;
     let o2 = aquariumData[0].exps.o2.curr;
+    let tempStatus = aquariumData[0].exps.temperature.status; // status of each value
+    let phStatus = aquariumData[0].exps.ph.status;
+    let nh3Status = aquariumData[0].exps.nh3.status;
+    let nh4Status = aquariumData[0].exps.nh4.status;
+    let o2Status = aquariumData[0].exps.o2.status;
+    let tempTrend = aquariumData[0].exps.temperature.trend; // Trend to tell if values are increasing or decreasing
+    let phTrend = aquariumData[0].exps.ph.trend;
+    let nh3Trend = aquariumData[0].exps.nh3.trend;
+    let nh4Trend = aquariumData[0].exps.nh4.trend;
+    let o2Trend = aquariumData[0].exps.o2.trend;
 
     // Call your custom graphic widgets
-    drawTempWidget(20, 110, temp);
-    drawPHWidget(20, 280, "pH Level", ph, 6.0, 8.5);
-    drawNH3Widget(20, 450, "Ammonia (NH3)", nh3, 0.0, 0.05);
-    drawNH4Widget(20, 620, "Nitrate (NH4)", nh4, 0.0, 1.0);
-    drawOxyWidget(605, 110, "Oxygen (O2)", o2, 0.0, 10.0);
-    
+    drawTempWidget(20, 110, temp, tempStatus, tempTrend);
+    drawPHWidget(20, 280, "pH Level", ph, phStatus, phTrend);
+    drawNH3Widget(20, 450, "Ammonia (NH3)", nh3, nh3Status, nh3Trend);
+    drawNH4Widget(20, 620, "Nitrate (NH4)", nh4, nh4Status, nh4Trend);
+    drawOxyWidget(605, 110, "Oxygen (O2)", o2, o2Status, o2Trend);
+
     drawTempHistoryWidget(240, 110);
     drawPHWidget2(240, 280);
     drawNH3HistoryWidget(240, 450); 
@@ -95,8 +105,9 @@ function draw() {
   pop();
 }
 
-// TEMPERATURE CARD -> Warning messages set to appear under value if outside target range -> prolly should change this to use the status
-function drawTempWidget(x, y, tempVal) {
+// TEMPERATURE CARD -> Warning messages set to appear under value if 
+// outside target range -> prolly should change this to use the status
+function drawTempWidget(x, y, tempVal, tempStatus, tempTrend) {
   // Background
   fill(165, 216, 255);
   noStroke();
@@ -104,29 +115,32 @@ function drawTempWidget(x, y, tempVal) {
   fill(25, 113, 194);
   textSize(20);
   text("Water Temp", x + 15, y + 12);
-  fill(25, 113, 194);
   textSize(36);
   text(tempVal + "°C", x + 15, y + 42);
-  if (tempVal > 28) {
+  if (tempStatus === "1") {
     fill(255, 0, 0);
     textSize(20);
-    text("WARNING: HIGH \nTEMP DETECTED", x + 15, y + 87);
+    text("WARNING", x + 15, y + 113);
   }
-  else if (tempVal < 20) {
-    fill(255, 0, 0);
+  if (tempTrend === "0") {
+    fill(25, 113, 194);
     textSize(20);
-    text("WARNING: LOW \nTEMP DETECTED", x + 15, y + 87);
-  }
-  else if (tempVal >= 20 && tempVal < 22 || tempVal > 26 && tempVal <= 28) {
-    fill(255, 255, 0);
+    text("TEMP STABLE", x + 15, y + 87);
+  } 
+  else if (tempTrend === "-1") {
+    fill(25, 113, 194);
     textSize(20);
-    text("OUTSIDE TARGET \nRANGE", x + 15, y + 87);
+    text("TEMP DECREASING", x + 15, y + 87);
   }
-
+  else if (tempTrend === "1") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("TEMP INCREASING", x + 15, y + 87);
+  }
 }
 
 // pH individual widget -> Warning messages
-function drawPHWidget(x, y, label, val) {
+function drawPHWidget(x, y, label, val, phStatus, phTrend) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 210, 140, 10);
@@ -136,25 +150,30 @@ function drawPHWidget(x, y, label, val) {
   fill(25, 113, 194);
   textSize(36);
   text(val + " pH", x + 15, y + 42);
-  if (val > 8.2) {
+  if (phStatus === "1") {
     fill(255, 0, 0);
     textSize(20);
-    text("WARNING: HIGH \npH DETECTED", x + 15, y + 87);
+    text("WARNING", x + 15, y + 113);
   }
-  else if (val < 6.5) {
-    fill(255, 0, 0);
+  if (phTrend === "0") {
+    fill(25, 113, 194);
     textSize(20);
-    text("WARNING: LOW \npH DETECTED", x + 15, y + 87);
+    text("pH STABLE", x + 15, y + 87);
   }
-  else if (val >= 6.5 && val < 6.8 || val > 7.8 && val <= 8.2) {
-    fill(255, 255, 0);
+  else if (phTrend === "-1") {
+    fill(25, 113, 194);
     textSize(20);
-    text("OUTSIDE TARGET \nRANGE", x + 15, y + 87);
+    text("pH DECREASING", x + 15, y + 87);
+  }
+  else if (phTrend === "1") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("pH INCREASING", x + 15, y + 87);
   }
 }
 
 // nh3 individual widget -> warning messages for high ammonia levels
-function drawNH3Widget(x, y, label, val) {
+function drawNH3Widget(x, y, label, val, nh3Status, nh3Trend) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 210, 140, 10);
@@ -164,20 +183,30 @@ function drawNH3Widget(x, y, label, val) {
   fill(25, 113, 194);
   textSize(36);
   text(val + " mg/L", x + 15, y + 42);
-  if (val > 0.02 && val <= 0.05) {
-    fill(255, 255, 0);
-    textSize(20);
-    text("OUTSIDE TARGET \nRANGE", x + 15, y + 87);
-  }
-  else if (val > 0.05) {
+  if (nh3Status === "1") {
     fill(255, 0, 0);
     textSize(20);
-    text("WARNING: HIGH \nAMMONIA", x + 15, y + 87);
+    text("WARNING", x + 15, y + 113);
+  }
+  else if (nh3Trend === "0") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("NH3 STABLE", x + 15, y + 87);
+  }
+  else if (nh3Trend === "-1") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("NH3 DECREASING", x + 15, y + 87);
+  }
+  else if (nh3Trend === "1") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("NH3 INCREASING", x + 15, y + 87);
   }
 }
 
 // nh4 individual widget -> ADD WARNING MESSAGES
-function drawNH4Widget(x, y, label, val) {
+function drawNH4Widget(x, y, label, val, nh4Status, nh4Trend) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 210, 140, 10);
@@ -187,10 +216,30 @@ function drawNH4Widget(x, y, label, val) {
   fill(25, 113, 194);
   textSize(36);
   text(val + " mg/L", x + 15, y + 42);
+  if (nh4Status == "1") {
+    fill(255, 0, 0);
+    textSize(20);
+    text("WARNING", x + 15, y + 113);
+  }
+  if (nh4Trend == "0") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("NH4 STABLE", x + 15, y + 87);
+  }
+  else if (nh4Trend == "-1") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("NH4 DECREASING", x + 15, y + 87);
+  }
+  else if (nh4Trend == "1") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("NH4 INCREASING", x + 15, y + 87);
+  }
 }
 
 // o2 individual widget -> ADD WARNING MESSAGES
-function drawOxyWidget(x, y, label, val) {
+function drawOxyWidget(x, y, label, val, oxyStatus, oxyTrend) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 210, 140, 10);
@@ -200,6 +249,26 @@ function drawOxyWidget(x, y, label, val) {
   fill(25, 113, 194);
   textSize(36);
   text(val + " mg/L", x + 15, y + 42);
+  if (oxyStatus == "1") {
+    fill(255, 0, 0);
+    textSize(20);
+    text("WARNING", x + 15, y + 113);
+  }
+  if (oxyTrend == "0") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("O2 STABLE", x + 15, y + 87);
+  }
+  else if (oxyTrend == "-1") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("O2 DECREASING", x + 15, y + 87);
+  }
+  else if (oxyTrend == "1") {
+    fill(25, 113, 194);
+    textSize(20);
+    text("O2 INCREASING", x + 15, y + 87);
+  }
 }
 
 // temp history widget -> need to actually add the history data
