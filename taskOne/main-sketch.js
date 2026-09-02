@@ -120,7 +120,9 @@ function draw() {
 
     drawTempHistoryWidget(240, 110);
     drawPHWidget2(240, 270, phHistory);
-    drawNH3HistoryWidget(240, 430); 
+    drawNH3HLevelWidget(240, 430, "Ammonia (NH3)", nh3); 
+    drawWarningWidget(610, 110, tempStatus, phStatus, nh3Status, nh4Status, o2Status);
+    drawLargeDataWidget(610, 430, temp, ph, nh3, nh4, o2);
 
   } else {
     // Loading State
@@ -334,9 +336,12 @@ function drawPHWidget2(x, y, historyData) {
   push();
   translate(x + 12, y + 95);
   rotate(-PI / 2);
+  textStyle(BOLD);
   text("pH Level", 0, 0);
   pop();
+  textStyle(BOLD);
   text("Time", x + 165, y + 125);
+  textStyle(NORMAL);
 
   if (!historyData || historyData.length === 0) return;
 
@@ -402,11 +407,169 @@ function drawPHWidget2(x, y, historyData) {
 }
 
 // NH3 history widget
-function drawNH3HistoryWidget(x, y, label, val) {
+function drawNH3HLevelWidget(x, y, label, val) {
   fill(165, 216, 255);
   noStroke();
   rect(x, y, 355, 140, 10);
   fill(25, 113, 194);
   textSize(20);
-  text("Ammonia (NH3) History", x + 15, y + 15);
+  text("Ammonia (NH3) Level", x + 15, y + 15);
+  textSize(14);
+  textStyle(BOLD);
+  text("Current Ammonia Level (mg/L)", x + 77, y + 120);
+  textStyle(NORMAL);
+  textSize(12);
+  text("0.0", x + 10, y +105);
+  text("0.01", x + 40, y + 105);
+  text("0.02", x + 80, y + 105);
+  text("0.03", x + 120, y + 105);
+  text("0.04", x + 160, y + 105);
+  text("0.05", x + 200, y + 105);
+  text("0.06", x + 240, y + 105);
+  text("0.07", x + 280, y + 105);
+  text("0.08", x + 320, y + 105);
+  fill(231, 245, 255, 200);
+  rect(x + 15, y + 50, 325, 50);
+  newVal = Number(val).toFixed(2);
+  newVal = Number(newVal);
+  if (newVal === 0.00) {
+    fill(0, 128, 0);
+    rect(x + 15, y + 50, 5, 50);
+    fill(25, 113, 194);
+    text(val, x + 25, y + 70);
+  }
+  else if (newVal === 0.01) {
+    fill(0, 128, 0);
+    rect(x + 15, y + 50, 40, 50);
+    fill(25, 113, 194);
+    text(val, x + 60, y + 70);
+  }
+  else if (newVal === 0.02) {
+    fill(0, 128, 0);
+    rect(x + 15, y + 50, 80, 50);
+    fill(25, 113, 194);
+    text(val, x + 100, y + 70);
+  }
+  else if (newVal === 0.03) {
+    fill(255, 255, 0);
+    rect(x + 15, y + 50, 120, 50);
+    fill(25, 113, 194);
+    text(val, x + 140, y + 70);
+  }
+  else if (newVal === 0.04) {
+    fill(255, 255, 0);
+    rect(x + 15, y + 50, 160, 50);
+    fill(25, 113, 194);
+    text(val, x + 180, y + 70);
+  }
+  else if (newVal === 0.05) {
+    fill(255, 255, 0);
+    rect(x + 15, y + 50, 200, 50);
+    fill(25, 113, 194);
+    text(val, x + 220, y + 70);
+  }
+  else if (newVal === 0.06) {
+    fill(255, 0, 0);
+    rect(x + 15, y + 50, 240, 50);
+    fill(25, 113, 194);
+    text(val, x + 260, y + 70);
+  }
+  else if (newVal === 0.07) {
+    fill(255, 0, 0);
+    rect(x + 15, y + 50, 280, 50);
+    fill(231, 245, 255, 200);
+    text(val, x + 260, y + 70);
+  }
+  else if (newVal >= 0.08) {
+    fill(255, 0, 0);
+    rect(x + 15, y + 50, 320, 50);
+    fill(231, 245, 255, 200);
+    text(val, x + 300, y + 70);
+  }
 }
+
+// widget for displaying any warnings
+function drawWarningWidget(x, y, tempStatus, phStatus, nh3Status, nh4Status, o2Status) {
+  fill(165, 216, 255);
+  noStroke();
+  rect(x, y, 575, 300, 10);
+  fill(25, 113, 194);
+  textSize(20);
+  text("Warning Messages", x + 15, y + 15);
+  textSize(16);
+  text("Any warnings that need addressing will be displayed below", x + 15, y + 45);
+  let warningMessages = [];
+  if (tempStatus === "1") warningMessages.push("WARNING: Water temp out of \nrange");
+  if (phStatus === "1") warningMessages.push("WARNING: pH level out of \nrange");
+  if (nh3Status === "1") warningMessages.push("WARNING: Ammonia (NH3) \nlevel out of range");
+  if (nh4Status === "1") warningMessages.push("WARNING: Nitrate (NH4) level \nout of range");
+  if (o2Status === "1") warningMessages.push("WARNING: Oxygen (O2) level \nout of range");
+  //displaywarningMessages(warningMessages, x + 15, y + 70);
+  fill(255, 0, 0);
+  textSize(40);
+  text(warningMessages.join("\n"), x + 15, y + 70);
+}
+
+// time values outside widget
+let value = 0
+let lastSecond = 0
+
+// widget for flipping between LARGE data values :)
+function drawLargeDataWidget(x, y, tempVal, phVal, nh3Val, nh4Val, o2Val) {
+  fill(165, 216, 255);
+  noStroke();
+  rect(x, y, 575, 300, 10);
+  fill(25, 113, 194);
+  textSize(20);
+  text("Large Data Values", x + 15, y + 15);
+
+  if (millis() - lastSecond >= 5000) {
+    value++;
+    lastSecond = millis();
+
+    if (value > 4) {
+      value = 0;
+    }
+  }
+  
+  if (value === 0) {
+    textSize(70);
+    textAlign(CENTER, CENTER);
+    fill(25, 113, 194);
+    text("Water Temp:", x + 575 / 2, y + 100);
+    textSize(100);
+    text(tempVal + "°C", x + 575 / 2, y + 190);
+  } 
+  else if (value === 1) {
+    textSize(70);
+    textAlign(CENTER, CENTER);
+    fill(25, 113, 194);
+    text("pH Level:", x + 575 / 2, y + 100);
+    textSize(100);
+    text(phVal + " pH", x + 575 / 2, y + 190);
+  }
+  else if (value === 2) {
+    textSize(70);
+    textAlign(CENTER, CENTER);
+    fill(25, 113, 194);
+    text("Ammonia (NH3):", x + 575 / 2, y + 100);
+    textSize(100);
+    text(nh3Val + " mg/L", x + 575 / 2, y + 190);
+  }
+  else if (value === 3) {
+    textSize(70);
+    textAlign(CENTER, CENTER);
+    fill(25, 113, 194);
+    text("Nitrate (NH4):", x + 575 / 2, y + 100);
+    textSize(100);
+    text(nh4Val + " mg/L", x + 575 / 2, y + 190);
+  }
+  else if (value === 4) {
+    textSize(70);
+    textAlign(CENTER, CENTER);
+    fill(25, 113, 194);
+    text("Oxygen (O2):", x + 575 / 2, y + 100);
+    textSize(100);
+    text(o2Val + " mg/L", x + 575 / 2, y + 190);
+  }
+  }
