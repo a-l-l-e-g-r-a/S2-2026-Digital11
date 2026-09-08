@@ -11,10 +11,13 @@ const USE_OFFLINE_MOCK = false;
 let aquariumData = null;
 let lastUpdated = "";
 let phHistory = [];
+let tempHistory = [];
 
 const DASHBOARD_WIDTH = 1180;
 const DASHBOARD_HEIGHT = 770;
 const MAX_HISTORY_POINTS = 24;
+const MAX_TEMP_HISTORY_POINTS = 90;
+const TEMPERATURE_COLLECTION_TIMES = [7, 12, 19];
 
 function preload() {
   // Load initial data before setup() runs
@@ -32,6 +35,16 @@ function setup() {
     } catch (err) {
       console.warn("Saved pH history was invalid, starting fresh.", err);
       phHistory = [];
+    }
+  }
+
+  const savedTempHistory = localStorage.getItem("seneye-temperature-history");
+  if (savedTempHistory) {
+    try {
+      tempHistory = JSON.parse(savedTempHistory);
+    } catch (err) {
+      console.warn("Saved temperature history was invalid, starting fresh.", err);
+      tempHistory = [];
     }
   }
   
@@ -67,7 +80,40 @@ function onDataLoaded(data) {
     }
   }
 
+  if (data && data[0] && data[0].exps && data[0].exps.temperature && data[0].exps.temperature.curr !== undefined) {
+    const now = new Date();
+    const collectionSlot = getTemperatureCollectionSlot(now);
+    const currentTemperature = Number(data[0].exps.temperature.curr);
+    const slotAlreadySaved = tempHistory.some(entry => entry.slot === collectionSlot);
+    if (collectionSlot && !slotAlreadySaved && !Number.isNaN(currentTemperature)) {
+      tempHistory.push({
+        time: now.toISOString(),
+        temperature: currentTemperature,
+        slot: collectionSlot
+      });
+
+      if (tempHistory.length > MAX_TEMP_HISTORY_POINTS) {
+        tempHistory.shift();
+      }
+
+      localStorage.setItem("seneye-temperature-history", JSON.stringify(tempHistory));
+    }
+  }
+
   console.log("Data refreshed successfully:", data);
+}
+
+function getTemperatureCollectionSlot(date) {
+  const collectionHour = TEMPERATURE_COLLECTION_TIMES.find(hour =>
+    date.getHours() === hour && date.getMinutes() < 10
+  );
+
+  if (collectionHour === undefined) return null;
+
+  const localDate = date.getFullYear() + "-" +
+    String(date.getMonth() + 1).padStart(2, "0") + "-" +
+    String(date.getDate()).padStart(2, "0");
+  return localDate + "-" + collectionHour;
 }
 
 function onError(err) {
@@ -118,7 +164,7 @@ function draw() {
     drawNH4Widget(85, 590, "Nitrate (NH4)", nh4, nh4Status, nh4Trend);
     drawOxyWidget(305, 590, "Oxygen (O2)", o2, o2Status, o2Trend);
 
-    drawTempHistoryWidget(240, 110);
+    drawTempHistoryWidget(240, 110, tempHistory);
     drawPHWidget2(240, 270, phHistory);
     drawNH3HLevelWidget(240, 430, "Ammonia (NH3)", nh3); 
     drawWarningWidget(610, 110, tempStatus, phStatus, nh3Status, nh4Status, o2Status);
@@ -299,7 +345,6 @@ function drawOxyWidget(x, y, label, val, oxyStatus, oxyTrend) {
   }
 }
 
-// temp history widget -> need to actually add the history data
 function drawTempHistoryWidget(x, y, historyData) {
   fill(165, 216, 255);
   noStroke();
@@ -307,6 +352,46 @@ function drawTempHistoryWidget(x, y, historyData) {
   fill(25, 113, 194);
   textSize(20);
   text("Temperature History", x + 15, y + 15);
+
+  const periods = [
+    { label: "7am", start: 7, end: 8 },
+    { label: "12pm", start: 12, end: 13 },
+    { label: "7pm", start: 19, end: 20 }
+  ];
+
+  textSize(14);
+  textStyle(BOLD);
+  for (let i = 0; i < periods.length; i++) {
+    const period = periods[i];
+    const reading = getLatestTemperatureForPeriod(historyData, period.start, period.end);
+    const columnX = x + 20 + i * 112;
+
+    text(period.label, columnX, y + 55);
+    textSize(22);
+    text(reading === null ? "--" : reading.toFixed(1) + "°C", columnX, y + 88);
+    textSize(10);
+    text(reading === null ? "No reading" : "Latest saved value", columnX, y + 110);
+    textSize(14);
+  }
+  textStyle(NORMAL);
+}
+
+function getLatestTemperatureForPeriod(historyData, startHour, endHour) {
+  if (!historyData || historyData.length === 0) return null;
+
+  for (let i = historyData.length - 1; i >= 0; i--) {
+    const entry = historyData[i];
+    const timestamp = entry && entry.time ? new Date(entry.time) : null;
+    const value = entry && typeof entry === "object" ? Number(entry.temperature) : Number(entry);
+
+    if (timestamp && !Number.isNaN(timestamp.getTime()) &&
+        timestamp.getHours() >= startHour && timestamp.getHours() < endHour &&
+        !Number.isNaN(value)) {
+      return value;
+    }
+  }
+
+  return null;
 }
 
 // pH level further data widget using live API readings collected over time
@@ -572,4 +657,4 @@ function drawLargeDataWidget(x, y, tempVal, phVal, nh3Val, nh4Val, o2Val) {
     textSize(100);
     text(o2Val + " mg/L", x + 575 / 2, y + 190);
   }
-  }
+}
