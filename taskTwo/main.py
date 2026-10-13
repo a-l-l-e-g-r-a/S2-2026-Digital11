@@ -49,21 +49,21 @@ def main():
             print("Is Product Fat?: No")
         else:
             print("Is Product Fat?: Yes")
-    add_y_n = input("Do you want to add this product to your pantry? (yes/no): ").lower()
-    while True:
-        if add_y_n == "yes":
-            pantry[product_name] = barcode
-            print("Product added to pantry!")
-            for product in pantry:
+        add_y_n = input("Do you want to add this product to your pantry? (yes/no): ").lower()
+        while True:
+            if add_y_n == "yes":
+                pantry[product_name] = barcode
+                print("Product added to pantry!")
                 print("Current Pantry:")
-                print(f"{product}")
+                for product in pantry:
+                    print(f"{product}")
                 break
-        elif add_y_n == "no":
-            print("Product not added to pantry.")
-            break
-        else:
-            print("Invalid input. Please enter 'yes' or 'no'.")
-    main()
+            elif add_y_n == "no":
+                print("Product not added to pantry.")
+                break
+            else:
+                print("Invalid input. Please enter 'yes' or 'no'.")
+        main()
                 
     elif product_check == "no":
         print("Thank you for using the VIRTUAL PANTRY! Goodbye!")
