@@ -1,17 +1,23 @@
 import sys
 
 import requests
-pantry = {}
+pantry = {} #dictionary prepared to hold all foods and their barcode
 print("Welcome to your VIRTUAL PANTRY! If you want to exit the program, type 'exit' at any time.")
 
 def main():
     product_check = input("Do you want to check another product? (yes/no): ").lower()
     if product_check == "yes":
-        barcode = input("Barcode: ")
+        while True:
+            barcode = input("Barcode: ")
+            if barcode.isdigit():
+                break
+            else:
+                print("Invalid barcode. Please try again.")
         url = f"https://world.openfoodfacts.net/api/v2/product/{barcode}"
         response = requests.get(url)
         data = response.json()
-    
+
+        #collecting data from Open Food Facts API
         product_name = data.get("product", {}).get("product_name", "Product name not found")
         product_carbohydrates = data.get("product", {}).get("nutriments", {}).get("carbohydrates_100g", "Carbohydrates not found")
         product_is_water = data.get("product", {}).get("nutriscore", {}).get("2021", {}).get("data", {}).get("is_water", "Is water not found")
@@ -19,10 +25,13 @@ def main():
         product_is_beverage = data.get("product", {}).get("nutriscore", {}).get("2021", {}).get("data", {}).get("is_beverage", "Is beverage not found")
         product_is_fat = data.get("product", {}).get("nutriscore", {}).get("2021", {}).get("data", {}).get("is_fat", "Is fat not found")
         product_health_score = data.get("product", {}).get("nutriscore_grade", "Health score not found")
-    
+
+        #Printing data from API
         print(f"Product Name: {product_name}")
         print(f"Carbohydrates: {product_carbohydrates} g")
         print(f"Health Score: {product_health_score}")
+
+        #If statement using Nutri-Score rating to recomend consumer habits
         if product_health_score == "a":
             print("This product is a very healthy choice.")
         elif product_health_score == "b":
@@ -33,24 +42,35 @@ def main():
             print("Note: This product is unhealthy.")
         elif product_health_score == "e":
             print("Consume in moderation. This product is very unhealthy.")
+        
+        #Further data from API
         if product_is_water == 0:
             print("Is Product Water?: No")
-        else:
+        elif product_is_water == 1:
             print("Is Product Water?: Yes")
+        else:
+            print("Is Product Water?: Not found")
         if product_is_cheese == 0:
             print("Is Product Cheese?: No")
-        else:
+        elif product_is_cheese == 1:
             print("Is Product Cheese?: Yes")
+        else:
+            print("Is Product Cheese?: Not found")
         if product_is_beverage == 0:
             print("Is Product Beverage?: No")
-        else:
+        elif product_is_beverage == 1:
             print("Is Product Beverage?: Yes")
+        else:
+            print("Is Product Beverage?: Not found")
         if product_is_fat == 0:
             print("Is Product Fat?: No")
-        else:
+        elif product_is_fat == 1:
             print("Is Product Fat?: Yes")
-        add_y_n = input("Do you want to add this product to your pantry? (yes/no): ").lower()
+        else:
+            print("Is Product Fat?: Not found")
+        
         while True:
+            add_y_n = input("Do you want to add this product to your pantry? (yes/no): ").lower()
             if add_y_n == "yes":
                 pantry[product_name] = barcode
                 print("Product added to pantry!")
