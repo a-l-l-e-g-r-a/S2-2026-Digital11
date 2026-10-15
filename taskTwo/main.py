@@ -8,7 +8,7 @@ def main():
     product_check = input("Do you want to check another product? (yes/no): ").lower()
     if product_check == "yes":
         while True:
-            barcode = input("Barcode: ")
+            barcode = input("Barcode: ") #Oreo actual barcode: 066721005694
             if barcode.isdigit():
                 break
             else:
@@ -39,7 +39,7 @@ def main():
         elif product_health_score == "c":
             print("This product is moderately healthy.")
         elif product_health_score == "d":
-            print("Note: This product is unhealthy.")
+            print("This product is unhealthy.")
         elif product_health_score == "e":
             print("Consume in moderation. This product is very unhealthy.")
         
