@@ -24,24 +24,37 @@ def main():
         product_is_cheese = data.get("product", {}).get("nutriscore", {}).get("2021", {}).get("data", {}).get("is_cheese", "Is cheese not found")
         product_is_beverage = data.get("product", {}).get("nutriscore", {}).get("2021", {}).get("data", {}).get("is_beverage", "Is beverage not found")
         product_is_fat = data.get("product", {}).get("nutriscore", {}).get("2021", {}).get("data", {}).get("is_fat", "Is fat not found")
-        product_health_score = data.get("product", {}).get("nutriscore_grade", "Health score not found")
+        product_health_score = data.get("product", {}).get("nutriscore_grade", "Health score not found").upper()
+        product_sugars = data.get("product", {}).get("nutriments", {}).get("sugars_100g", "Sugars not found")
 
         #Printing data from API
         print(f"Product Name: {product_name}")
         print(f"Carbohydrates: {product_carbohydrates} g")
         print(f"Health Score: {product_health_score}")
+        print(f"Sugars: {product_sugars} g")
 
         #If statement using Nutri-Score rating to recomend consumer habits
-        if product_health_score == "a":
+        if product_health_score == "A":
             print("This product is a very healthy choice.")
-        elif product_health_score == "b":
+        elif product_health_score == "B":
             print("This product is healthy.")
-        elif product_health_score == "c":
+        elif product_health_score == "C":
             print("This product is moderately healthy.")
-        elif product_health_score == "d":
+        elif product_health_score == "D":
             print("This product is unhealthy.")
-        elif product_health_score == "e":
+        elif product_health_score == "E":
             print("Consume in moderation. This product is very unhealthy.")
+        else:
+            print("Health score not found.")
+        if product_sugars is not None:
+            if product_sugars <= 5:
+                print(f"This product is low in sugar ({product_sugars} g per 100g)")
+            elif product_sugars <= 22.5:
+                print(f"This product has moderate sugar levels ({product_sugars} g per 100g)")
+            else:
+                print(f"This product is high in sugar ({product_sugars} g per 100g)")
+        else:
+            print("Sugar content not found.")
         
         #Further data from API
         if product_is_water == 0:
