@@ -14,7 +14,10 @@ def main():
             else:
                 print("Invalid barcode. Please try again.")
         url = f"https://world.openfoodfacts.net/api/v2/product/{barcode}"
-        response = requests.get(url)
+        headers = {
+            "User-Agent": "MyBarcodeApp/1.0 (barneaw@pedarecc.sa.edu.au)"
+        }
+        response = requests.get(url, headers=headers)
         data = response.json()
 
         #collecting data from Open Food Facts API
