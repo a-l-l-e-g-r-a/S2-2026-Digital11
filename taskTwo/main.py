@@ -58,9 +58,15 @@ def product_info(data, barcode): #collecting product data from API
 
 def product_print(product_name, product_carbohydrates, product_health_score, product_sugars, product_is_water, product_is_cheese, product_is_beverage, product_is_fat, barcode): #printing data from API
     print(f"Product Name: {product_name}")
-    print(f"Carbohydrates: {product_carbohydrates} g")
+    if product_carbohydrates == "Carbohydrates not found":
+        print(f"{product_carbohydrates}")
+    else:
+        print(f"Carbohydrates: {product_carbohydrates}g")
     print(f"Health Score: {product_health_score}")
-    print(f"Sugars: {product_sugars} g")
+    if product_sugars == "Sugars not found":
+            print(f"{product_sugars}")
+    else:
+        print(f"Sugars: {product_sugars}g")
 
     #If statement using Nutri-Score rating to recomend consumer habits
     if product_health_score == "A":
@@ -77,10 +83,10 @@ def product_print(product_name, product_carbohydrates, product_health_score, pro
         print("Health score not found.")
 
     #if statement noting the sugar content of the product
-    if product_sugars is not None:
-        if product_sugars <= 5:
+    if product_sugars is not None and product_sugars != "Sugars not found":
+        if product_sugars < 5:
             print(f"This product is low in sugar ({product_sugars}g per 100g)")
-        elif product_sugars <= 22.5:
+        elif product_sugars >= 5 and product_sugars <= 22.5:
             print(f"This product has moderate sugar levels ({product_sugars}g per 100g)")
         else:
             print(f"This product is high in sugar ({product_sugars}g per 100g)")
@@ -88,7 +94,7 @@ def product_print(product_name, product_carbohydrates, product_health_score, pro
         print("Sugar content not found.")
 
     #if statement commenting on the carbs in the product
-    if product_carbohydrates is not None:
+    if product_carbohydrates is not None and product_carbohydrates != "Carbohydrates not found":
         if product_carbohydrates < 100:
             print(f"This product is low in carbohydrates ({product_carbohydrates}g per 100g)")
         elif product_carbohydrates >= 100:
@@ -160,6 +166,82 @@ def view_pantry(): #viewing pantry
     main()
 
 def check_three_items(): #checking 3 items in pantry
+    in_pantry = len(pantry)
+    if in_pantry < 3:
+        print(f"You have {in_pantry} item(s) in your pantry. Please add more items to compare 3 items.")
+    elif in_pantry == 3:
+        print("You have 3 items in your pantry. They are:")
+        for item in pantry:
+            print(f"{item}")
+        print("The barcode, sugars, carbohydrates, nutri-score and water status of these products is as follows")
+        print("Barcodes:")
+        for item in pantry:
+            print(f"{item}: {pantry[item]['barcode']}")
+        print("Sugars:")
+        for item in pantry:
+            print(f"{item}: {pantry[item]['sugars']}g")
+        print("Carbohydrates:")
+        for item in pantry:
+            print(f"{item}: {pantry[item]['carbohydrates']}g")
+        print("Nutri-Scores:")
+        for item in pantry:
+            print(f"{item}: {pantry[item]['nutri-score']}")
+        print("Water Status:")
+        for item in pantry:
+            water_status = "Yes" if pantry[item]['is_water'] == 1 else "No"
+            print(f"{item}: {water_status}")
+    else:
+        print(f"You have {in_pantry} items in your pantry. They are:")
+        for item in pantry:
+            print(f"{item}")
+        
+        products = list(pantry.keys())
+        print("\nChoose 3 products to compare:")
+        for i, item in enumerate(products, start=1):
+            print(f"{i}. {item}")
+        
+        selected = []
+
+        while len(selected) < 3:
+            choice = input(
+                f"Select product {len(selected) + 1} "
+                f"(enter a number from 1 to {len(products)}): "
+        )
+            if not choice.isdigit():
+                print("Invalid input. Please enter a number.")
+                continue
+
+                choice = int(choice)
+
+            if choice < 1 or choice > len(products):
+                print("That number is not in the list.")
+                continue
+
+            product = products[choice - 1]
+
+            if product in selected:
+                print("You have already selected that product.")
+                continue
+
+            selected.append(product)
+
+            print("\nComparison of your selected products:")
+
+            for item in selected:
+                details = pantry[item]
+                print(f"\nProduct: {item}")
+                print(f"Barcode: {details['barcode']}")
+                print(f"Sugars: {details['sugars']} g")
+                print(f"Carbohydrates: {details['carbohydrates']} g")
+                print(f"Nutri-Score: {details['nutri-score']}")
+                if is_water == 1
+                    print("Is Water: Yes")
+                elif is_water == 0
+                    print("Is Water: No")
+                else:
+                    print("Is Water: Not found"
+            main()
+
 
 if __name__ == "__main__":
     main()
