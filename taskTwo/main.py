@@ -2,16 +2,19 @@ import sys
 
 import requests
 pantry = {} #dictionary prepared to hold all foods and their barcode
-print("Welcome to your VIRTUAL PANTRY! If you want to exit the program, type 'exit' at any time.")
+print("Welcome to your VIRTUAL PANTRY! If you want to exit the program, type '4' when at the menu page.")
 
 def main():
+    print(" ")
     print("Menu Options:")
     print("1. Check a product")
     print("2. View pantry")
     print("3. Check 3 Items")
     print("4. Exit")
+    print(" ")
     while True:
         choice = input("Please select an option (1-4): ")
+        print(" ")
         if choice.isdigit() and 1 <= int(choice) <= 4:
             break
         else:
@@ -29,6 +32,7 @@ def main():
 def product_check(): #getting barcode and calling API
     while True:
         barcode = input("Barcode: ") #Oreo actual barcode: 066721005694
+        print(" ")
         if barcode.isdigit():
             break
         else:
@@ -132,7 +136,9 @@ def product_print(product_name, product_carbohydrates, product_health_score, pro
 
 def product_pantry(product_name, product_carbohydrates, product_health_score, product_sugars, product_is_water, product_is_cheese, product_is_beverage, product_is_fat, barcode): #adding products to pantry
     while True:
+        print(" ")
         add_y_n = input("Do you want to add this product to your pantry? (yes/no): ").lower()
+        print(" ")
         if add_y_n == "yes":
             pantry[product_name] = {
                 "barcode": barcode,
@@ -148,9 +154,11 @@ def product_pantry(product_name, product_carbohydrates, product_health_score, pr
             print("Current Pantry:")
             for product in pantry:
                 print(f"{product}, Barcode: {pantry[product]['barcode']}, Nutri-Score: {pantry[product]['nutri-score']}, Carbohydrates: {pantry[product]['carbohydrates']} g, Sugars: {pantry[product]['sugars']} g")
+                print(" ")
             break
         elif add_y_n == "no":
             print("Product not added to pantry.")
+            print(" ")
             break
         else:
             print("Invalid input. Please enter 'yes' or 'no'.")
@@ -169,6 +177,8 @@ def check_three_items(): #checking 3 items in pantry
     in_pantry = len(pantry)
     if in_pantry < 3:
         print(f"You have {in_pantry} item(s) in your pantry. Please add more items to compare 3 items.")
+        print(" ")
+        main()
     elif in_pantry == 3:
         print("You have 3 items in your pantry. They are:")
         for item in pantry:
@@ -177,19 +187,25 @@ def check_three_items(): #checking 3 items in pantry
         print("Barcodes:")
         for item in pantry:
             print(f"{item}: {pantry[item]['barcode']}")
+        print(" ")
         print("Sugars:")
         for item in pantry:
             print(f"{item}: {pantry[item]['sugars']}g")
+        print(" ")
         print("Carbohydrates:")
         for item in pantry:
             print(f"{item}: {pantry[item]['carbohydrates']}g")
+        print(" ")
         print("Nutri-Scores:")
         for item in pantry:
             print(f"{item}: {pantry[item]['nutri-score']}")
+        print(" ")
         print("Water Status:")
         for item in pantry:
             water_status = "Yes" if pantry[item]['is_water'] == 1 else "No"
             print(f"{item}: {water_status}")
+        print(" ")
+        main()
     else:
         print(f"You have {in_pantry} items in your pantry. They are:")
         for item in pantry:
@@ -199,6 +215,7 @@ def check_three_items(): #checking 3 items in pantry
         print("\nChoose 3 products to compare:")
         for i, item in enumerate(products, start=1):
             print(f"{i}. {item}")
+        print(" ")
         
         selected = []
 
@@ -211,7 +228,7 @@ def check_three_items(): #checking 3 items in pantry
                 print("Invalid input. Please enter a number.")
                 continue
 
-                choice = int(choice)
+            choice = int(choice)
 
             if choice < 1 or choice > len(products):
                 print("That number is not in the list.")
@@ -225,22 +242,25 @@ def check_three_items(): #checking 3 items in pantry
 
             selected.append(product)
 
-            print("\nComparison of your selected products:")
+        print("\nComparison of your 3 selected products:")
 
-            for item in selected:
-                details = pantry[item]
-                print(f"\nProduct: {item}")
-                print(f"Barcode: {details['barcode']}")
-                print(f"Sugars: {details['sugars']} g")
-                print(f"Carbohydrates: {details['carbohydrates']} g")
-                print(f"Nutri-Score: {details['nutri-score']}")
-                if is_water == 1
-                    print("Is Water: Yes")
-                elif is_water == 0
-                    print("Is Water: No")
-                else:
-                    print("Is Water: Not found"
-            main()
+        for item in selected:
+            details = pantry[item]
+            print(f"\nProduct: {item}")
+            print(f"Barcode: {details['barcode']}")
+            print(f"Sugars: {details['sugars']} g")
+            print(f"Carbohydrates: {details['carbohydrates']} g")
+            print(f"Nutri-Score: {details['nutri-score']}")
+            if details['is_water'] == 1:
+                print("Is Water: Yes")
+                print(" ")
+            elif details['is_water'] == 0:
+                print("Is Water: No")
+                print(" ")
+            else:
+                print("Is Water: Not found")
+                print(" ")
+        main()
 
 
 if __name__ == "__main__":
